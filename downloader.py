@@ -127,7 +127,7 @@ class Downloader(object):
                                     sys.stdout.write('\r                                                       ')
                                     sys.stdout.write('\r{0}% complete'.format(percent))
                                     sys.stdout.flush()
-                                    logging.info('Downloaded '+ str(downloadedSize) + ' bytes')
+                                    #logging.info('Downloaded '+ str(downloadedSize) + ' bytes')
                                 print('\ndone!!!')
                                 logging.info('Download complete')
                                 self.downloadedList.append(item.guid)
