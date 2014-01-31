@@ -149,9 +149,10 @@ class Downloader(object):
 
 
 
+def main():
+    commands = get_commands(sys.argv[1:])
+    aDownloader = Downloader(commands['feed'],commands['output'])
+    aDownloader.download()
 
-commands = get_commands(sys.argv[1:])
-
-aDownloader = Downloader(commands['feed'],commands['output'])
-
-aDownloader.download()
+if __name__ == '__main__':
+    main() 
