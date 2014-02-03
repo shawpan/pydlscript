@@ -6,14 +6,15 @@ import feedparser
 import urllib.request
 import urllib.parse
 import urllib.error
-import shutil
+
+# import modules for threading and file I/O
 import os
+import threading
+
+# import modules for logging and json manipulation
 import json
 import logging
-import traceback
-import multiprocessing
-import ctypes
-import threading
+
 logging.basicConfig(filename='downloader.log',filemode='a', format='%(levelname)s : %(asctime)s : %(message)s',level=logging.DEBUG)
 #logging.info('Logging started')
 
@@ -48,10 +49,12 @@ def get_commands(args):
 
 
 	
-# Item Downloader thread
+# Item Downloader thread for downloading single item
 
 class ItemDownLoader(threading.Thread):
    
+    #initialize with title, lock object, semaphore that restricts max number of parallel threads, output file handle, input response stream, 
+    #start and end bytes to download, list that keeps fully downloaded item's id, file handle to store downloadedList 
     def __init__(self,itemTitle,lock,semaphore,guid,outFile,response,startBytes,endBytes,downloadedList,downloadedListFile):
         threading.Thread.__init__(self)
         self.semaphore = semaphore
@@ -129,12 +132,9 @@ class Downloader(object):
             logging.info('Parsed rss feed from '+str(self.feedUrl))
             print("This feed has ",len(rssfeed.entries)," download sources")
             lock = threading.Lock()
-            #i=0
+            
             for item in rssfeed.entries:
-                #if i > 1:
-                #    break
-                #i += 1
-
+                
                 print("Downloading ",item.title)
                 logging.info('Downloading from '+ str(item.link))
                 if item.guid in self.downloadedList:
@@ -176,14 +176,10 @@ class Downloader(object):
                             print("File already exists at ",fileName)
                             logging.info('File already exists at '+fileName)
                         if outFile!=None:
-                            #print(__name__)
-                            #if __name__ == '__main__':
                             self.semaphore.acquire()
                             p = ItemDownLoader(item.title,lock,self.semaphore,item.guid,outFile,response,downloadedSize,totalSize,self.downloadedList,self.downloadedListFile)
-							#p = multiprocessing.Process(target=self.parallel_download,args=(lock,item.guid,self.downloadedList))
                             p.start()
-                            #p.join()
-                            #self.parallel_download(item.guid,outFile,response,downloadedSize,totalSize,self.downloadedList,self.downloadedListFile)						
+                            #p.join()		
                             
                     except Exception as e:
                         logging.exception(e)
@@ -191,7 +187,6 @@ class Downloader(object):
                 except Exception as e:
                     logging.exception(e)
                     print(e)
-            #print(self.downloadedList)
         except Exception as e:
             logging.exception(e)
             print("Could not parse from ",self.feedUrl)
