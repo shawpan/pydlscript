@@ -1,7 +1,7 @@
 pydlscript
 ==========
 
-Two python scripts to download files from rss feeds (parallel + non-parallel)
+python scripts to download files from rss feeds (parallel + non-parallel)
 
 
 Usage Example
